@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>字変 - Preview</title>
+<style>
+body {
+  margin: 0;
+  height: 100dvh;
+  overflow: hidden;
+}
+.bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top, #ffffff 0%, #ffffff 50%, #ff8640 100%);
+  z-index: 0;
+}
+.frame {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url("images/frame.png") center/cover no-repeat;
+  z-index: 2;
+  pointer-events: none;
+}
+.card {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  width: 120vw;
+  max-width: 1600px;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  animation: floatBreath 3s ease-in-out infinite;
+}
+
+/* floatとbreathを1つに統合 */
+@keyframes floatBreath {
+  0%   { transform: translate(-50%, -50%) translateY(0px)   scale(1);   }
+  50%  { transform: translate(-50%, -50%) translateY(-20px) scale(1.05); }
+  100% { transform: translate(-50%, -50%) translateY(0px)   scale(1);   }
+}
+
+.start-btn {
+  position: absolute;
+  bottom: 250px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 60px;
+  border: 4px solid #000000;
+  border-radius: 15px;
+  background: #4b0000;
+  color: rgb(255, 255, 255);
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #2a0000;
+  z-index: 999;
+  transition: 0.15s;
+}
+.start-btn:hover { transform: translateX(-50%) scale(1.05); }
+.start-btn:active { transform: translateX(-50%) scale(0.95); }
+
+@media (max-width: 768px) {
+  .card { width: 120vw; top: 40%; }
+  .start-btn { bottom: 140px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="frame"></div>
+<img src="images/card.png" class="card">
+
+<button class="start-btn" onclick="location.href='home.html'">
+  はじめる
+</button>
+
+</body>
+</html>
