@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>字変 - 設定</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  font-family: sans-serif;
+  transition: background 0.3s, color 0.3s;
+}
+body.light { background: radial-gradient(circle at top, #ffffff 0%, #ffffff 50%, #ff8640 100%); color: #222; }
+body.dark { background: #1a1a1a; color: #eee; }
+
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 30px 20px 140px;
+}
+
+/* ヘッダー */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  color: inherit;
+}
+h1 {
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 4px;
+}
+
+/* セクション */
+.section {
+  margin-bottom: 28px;
+}
+.section-title {
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  opacity: 0.5;
+  margin-bottom: 10px;
+  padding-left: 4px;
+}
+.setting-card {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+body.light .setting-card { background: white; }
+body.dark .setting-card { background: #2a2a2a; }
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(128,128,128,0.15);
+}
+.setting-row:last-child { border-bottom: none; }
+
+.setting-label {
+  font-size: 17px;
+  font-weight: bold;
+}
+.setting-sub {
+  font-size: 12px;
+  opacity: 0.5;
+  margin-top: 2px;
+}
+
+/* トグルスイッチ */
+.toggle {
+  position: relative;
+  width: 52px;
+  height: 30px;
+}
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: #ccc;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.toggle-slider:before {
+  content: "";
+  position: absolute;
+  width: 22px; height: 22px;
+  left: 4px; bottom: 4px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+.toggle input:checked + .toggle-slider { background: #4b0000; }
+.toggle input:checked + .toggle-slider:before { transform: translateX(22px); }
+
+/* スライダー */
+.volume-slider {
+  width: 160px;
+  accent-color: #4b0000;
+}
+
+/* ボタン系 */
+.action-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.1s;
+}
+.action-btn:active { transform: scale(0.95); }
+.btn-red { background: #8b0000; color: white; }
+.btn-link { background: #4b0000; color: white; }
+
+.bottom-nav {
+  position: fixed; left: 0; bottom: 0;
+  width: 100%; height: 110px;
+  background: #5b0000;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+}
+.nav-btn { width: 70px; cursor: pointer; transition: 0.08s; }
+.nav-btn:active { transform: scale(0.88); }
+</style>
+</head>
+<body class="light">
+
+<div class="container">
+
+  <div class="header">
+    <button class="back-btn" onclick="history.back()">←</button>
+    <h1>設定</h1>
+  </div>
+
+  <!-- 音量 -->
+  <div class="section">
+    <div class="section-title">サウンド</div>
+    <div class="setting-card">
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">BGM音量</div>
+          <div class="setting-sub">バックグラウンドミュージック</div>
+        </div>
+        <input type="range" class="volume-slider" id="bgmVolume" min="0" max="100" value="80" oninput="saveVolume('bgm', this.value)">
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">効果音量</div>
+          <div class="setting-sub">カード操作・バトル音</div>
+        </div>
+        <input type="range" class="volume-slider" id="seVolume" min="0" max="100" value="80" oninput="saveVolume('se', this.value)">
+      </div>
+    </div>
+  </div>
+
+  
+
+
+
+  <!-- お問い合わせ -->
+  <div class="section">
+    <div class="section-title">サポート</div>
+    <div class="setting-card">
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">お問い合わせ</div>
+          <div class="setting-sub">ご意見・不具合報告</div>
+        </div>
+        <button class="action-btn btn-link" onclick="location.href='https://docs.google.com/forms/d/e/1FAIpQLSdYO2jGHehOwHapyV0AMmgbeCj7Ya5jm7i6c6LyBnDpYfxXYQ/viewform?usp=header'">開く</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom-nav">
+  <img src="images/btn_home.png"   class="nav-btn" onclick="location.href='home.html'">
+  <img src="images/btn_gacha.png"  class="nav-btn" onclick="location.href='gacha.html'">
+  <img src="images/btn_deck.png"   class="nav-btn" onclick="location.href='deck.html'">
+  <img src="images/btn_battle.png" class="nav-btn" onclick="location.href='battle select.html'">
+</div>
+
+<script>
+function saveVolume(type, val) {
+  localStorage.setItem('vol_' + type, val);
+}
+
+function saveSetting(key, val) {
+  localStorage.setItem(key, val ? 'true' : 'false');
+}
+
+function toggleDark(enabled) {
+  localStorage.setItem('darkMode', enabled ? 'true' : 'false');
+  applyDark(enabled);
+}
+
+function applyDark(enabled) {
+  document.body.classList.toggle('dark', enabled);
+  document.body.classList.toggle('light', !enabled);
+}
+
+// 設定を読み込む
+function loadSettings() {
+  const dark = localStorage.getItem('darkMode') === 'true';
+  applyDark(dark);
+
+  const bgm = localStorage.getItem('vol_bgm') || 80;
+  const se  = localStorage.getItem('vol_se')  || 80;
+  document.getElementById('bgmVolume').value = bgm;
+  document.getElementById('seVolume').value  = se;
+}
+
+loadSettings();
+
+
+</script>
+</body>
+</html>
