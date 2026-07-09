@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>字変 - チュートリアルバトル</title>
+
+<link rel="stylesheet" href="css/tutorial.css">
+</head>
+<body>
+<audio id="bgm" src="audio/bgm_main.mp3" loop></audio>
+<div class="bg"></div>
+
+<div class="battle-screen">
+  <div class="enemy-area">
+    <div class="enemy-hand" id="enemyHand"></div>
+  </div>
+  <div class="battle-zone">
+    <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+      <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+        <div class="battle-slot" id="enemyBattleSlot">相手</div>
+        <div style="display:flex; gap:6px;">
+          <div class="bench-slot" id="enemyBench0">ベンチ</div>
+          <div class="bench-slot" id="enemyBench1">ベンチ</div>
+          <div class="bench-slot" id="enemyBench2">ベンチ</div>
+        </div>
+      </div>
+      <div style="width:220px; height:2px; background:rgba(255,255,255,0.2); border-radius:1px;"></div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+        <div style="display:flex; gap:6px;">
+          <div class="bench-slot" id="playerBench0">ベンチ</div>
+          <div class="bench-slot" id="playerBench1">ベンチ</div>
+          <div class="bench-slot" id="playerBench2">ベンチ</div>
+        </div>
+        <div class="battle-slot" id="playerBattleSlot">あなた</div>
+      </div>
+    </div>
+  </div>
+  <div class="player-area">
+    <div class="yamafuda-stack">
+      <button class="turn-end-btn" id="turnEndBtn" onclick="onTurnEnd()" disabled>終了</button>
+      <img src="images/yamafuda.png" class="yamafuda">
+      <div class="yamafuda-count" id="playerDeckCount">5</div>
+    </div>
+    <div class="player-hand" id="playerHand"></div>
+    <div class="yamafuda-stack">
+      <img src="images/yamafuda_cpu.png" class="yamafuda">
+      <div class="yamafuda-count" id="enemyDeckCount">5</div>
+    </div>
+  </div>
+</div>
+
+<div class="top-right-ui">
+  <div class="score-box">
+    <div class="label">点数</div>
+    <div class="score-row">
+      <span class="score-player" id="playerScore">0</span>
+      <span style="color:#555">／</span>
+      <span class="score-cpu" id="cpuScore">0</span>
+    </div>
+  </div>
+</div>
+
+<!-- チュートリアルUI -->
+<div id="tutorialOverlay">
+  <div id="tutorialBox">
+    <img src="images/yuu.png" id="tutorialCharacter">
+    <div id="tutorialDialog">
+      <div id="tutorialNameTag" class="guide">ユゥ</div>
+      <div id="tutorialText"></div>
+      <button id="tutorialNextBtn" onclick="nextStep()">次へ →</button>
+    </div>
+  </div>
+</div>
+
+<!-- 終了画面 -->
+<div id="endScreen">
+  <h2>チュートリアル完了！</h2>
+  <p>ユゥ「これで基本操作は完璧だよ！実際のバトルに挑戦してみよう！」</p>
+  <button class="btn-battle" onclick="location.href='battle select.html'">バトルへ！</button>
+  <button class="btn-home" onclick="location.href='home.html'">ホームへ</button>
+</div>
+
+<script src="js/cards.js"></script>
+<script src="js/tutorial.js"></script>
+
+</body>
+</html>

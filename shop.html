@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>字変 - 交換所</title>
+<style>
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{
+    min-height:100vh;
+    font-family:sans-serif;
+    padding-bottom:130px;
+}
+#header{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:30px 20px 20px;
+    gap:16px;
+    position:relative;
+}
+#backBtn{
+    position:fixed;
+    top:20px;
+    left:20px;
+
+    width:60px;
+    height:60px;
+
+    border:none;
+    border-radius:50%;
+
+    font-size:30px;
+
+    cursor:pointer;
+
+    z-index:1000;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    text-decoration:none;
+
+    color:#000;
+    background:#fff;
+}
+
+#backBtn:active{
+    transform:scale(0.92);
+}
+
+#logo{
+    font-size:32px;
+    font-weight:bold;
+    color:#4b0000;
+    letter-spacing:2px;
+}
+.status-row{
+    display:flex;
+    gap:16px;
+}
+.status-item{
+    background:white;
+    padding:10px 20px;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+    box-shadow:0 2px 8px rgba(0,0,0,.12);
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+.status-item img{ height:28px; width:auto; }
+.card-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+    padding:0 12px;
+}
+.shop-card{
+    background:white;
+    border-radius:10px;
+    padding:8px 6px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    box-shadow:0 2px 6px rgba(0,0,0,.1);
+}
+.shop-card img{ width:100%; border-radius:6px; }
+.card-name{ font-size:13px; font-weight:bold; color:#333; }
+.card-cost{ font-size:11px; font-weight:bold; color:#4b0000; }
+.exchange-btn{
+    width:100%;
+    padding:5px 0;
+    border:none;
+    border-radius:8px;
+    background:#4b0000;
+    font-size:11px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.1s;
+}
+.exchange-btn:active{ transform:scale(.95); }
+.exchange-btn:disabled{ background:#ccc; cursor:not-allowed; }
+.exchange-btn.owned{ background:#888; cursor:not-allowed; }
+.tabs{
+    display:flex;
+    gap:8px;
+    padding:0 16px;
+    margin-bottom:16px;
+}
+.tab{
+    flex:1;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    background:#ddd;
+    color:#666;
+    transition:.1s;
+}
+.tab.active{ background:#4b0000; color:white; }
+#toast{
+    position:fixed;
+    bottom:140px;
+    left:50%;
+    transform:translateX(-50%);
+    background:rgba(0,0,0,.8);
+    padding:12px 24px;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:bold;
+    opacity:0;
+    pointer-events:none;
+    z-index:9999;
+    transition:opacity .3s;
+}
+.bottom-nav{
+    position:fixed;left:0;bottom:0;
+    width:100%;height:110px;
+    background:#5b0000;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    z-index:1000;
+}
+.nav-btn{ width:70px; cursor:pointer; transition:0.08s; }
+.nav-btn:active{ transform:scale(0.88); }
+.setting-btn{
+    position:fixed;
+    left:10px;
+    bottom:140px;
+    width:100px;
+    height:100px;
+    cursor:pointer;
+    transition:0.08s;
+    background:none;
+    border:none;
+    line-height:1;
+    z-index:1100;
+}
+.setting-btn:active{ transform:scale(0.88); }
+.bg{
+    position:fixed;
+    inset:0;
+    background:radial-gradient(circle at top, #ffffff 0%, #ffffff 50%, #ff8640 100%);
+    z-index:0;
+}
+#header, .tabs, #cardGrid, #toast{
+    position:relative;
+    z-index:1;
+}
+</style>
+</head>
+<body>
+<audio id="bgm" src="audio/bgm_main.mp3" loop></audio>
+<div class="bg"></div>
+
+<div id="header">
+    <button id="backBtn" onclick="location.href='gacha.html'">←</button>
+    <div id="logo">交換所</div>
+    <div class="status-row">
+        <div class="status-item">
+            <img src="images/願いの短冊.png">
+            <span id="tanzakuText">0</span>枚
+        </div>
+        <div class="status-item">Pt: <span id="pointText">0</span></div>
+    </div>
+</div>
+
+<div class="tabs">
+    <button class="tab active" onclick="showTab('N')">N<br><small>50pt</small></button>
+    <button class="tab" onclick="showTab('SSR')">SSR<br><small>150pt</small></button>
+    <button class="tab" onclick="showTab('UR')">UR<br><small>500pt</small></button>
+</div>
+
+<div id="cardGrid" class="card-grid"></div>
+<div id="toast"></div>
+
+<script src="js/cards.js"></script>
+<script>
+    // ===== BGM再生 =====
+const bgmEl = document.getElementById('bgm');
+if (bgmEl) {
+  const savedVol = localStorage.getItem('vol_bgm');
+  bgmEl.volume = (savedVol !== null ? savedVol : 80) / 100;
+
+  // ブラウザの自動再生ブロック対策：最初のタップ/クリックで再生開始
+  const tryPlayBgm = () => {
+    bgmEl.play().catch(() => {});
+    document.removeEventListener('click', tryPlayBgm);
+    document.removeEventListener('touchstart', tryPlayBgm);
+  };
+  document.addEventListener('click', tryPlayBgm, { once: true });
+  document.addEventListener('touchstart', tryPlayBgm, { once: true });
+}
+const COSTS = { N: 50, SSR: 150, UR: 500 };
+let currentTab = "N";
+
+function getPoints(){ return parseInt(localStorage.getItem("points")) || 0; }
+function setPoints(v){ localStorage.setItem("points", v); updateStatus(); }
+function getTanzaku(){ return parseInt(localStorage.getItem("tanzaku")) || 0; }
+
+function updateStatus(){
+    document.getElementById("pointText").textContent = getPoints();
+    document.getElementById("tanzakuText").textContent = getTanzaku();
+}
+
+function getOwned(){
+    return JSON.parse(localStorage.getItem("ownedCards")) || [];
+}
+
+function showToast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.opacity = "1";
+    setTimeout(()=>t.style.opacity="0", 2000);
+}
+
+function showTab(rarity){
+    currentTab = rarity;
+    document.querySelectorAll(".tab").forEach((t,i)=>{
+        t.classList.toggle("active", ["N","SSR","UR"][i] === rarity);
+    });
+    renderGrid();
+}
+
+function renderGrid(){
+    const grid = document.getElementById("cardGrid");
+    grid.innerHTML = "";
+    const owned = getOwned();
+    const ownedNames = owned.map(c => c.name);
+    const filtered = cards.filter(c => c.rarity === currentTab);
+    const cost = COSTS[currentTab];
+    const pts = getPoints();
+
+    filtered.forEach(card => {
+        const isOwned = ownedNames.includes(card.name);
+        const canBuy = !isOwned && pts >= cost;
+
+        const div = document.createElement("div");
+        div.className = "shop-card";
+
+        const img = document.createElement("img");
+        img.src = "images/genshokugensho_cards/" + card.image;
+
+        const name = document.createElement("div");
+        name.className = "card-name";
+        name.textContent = card.name;
+
+        const costEl = document.createElement("div");
+        costEl.className = "card-cost";
+        costEl.textContent = isOwned ? "所持済み" : `${cost} pt`;
+
+        const btn = document.createElement("button");
+        btn.className = "exchange-btn" + (isOwned ? " owned" : "");
+        btn.textContent = isOwned ? "所持済み" : "交換する";
+        btn.disabled = isOwned || !canBuy;
+        btn.onclick = () => exchange(card, cost);
+
+        div.appendChild(img);
+        div.appendChild(name);
+        div.appendChild(costEl);
+        div.appendChild(btn);
+        grid.appendChild(div);
+    });
+}
+
+function exchange(card, cost){
+    const pts = getPoints();
+    if(pts < cost){ showToast("ポイントが足りません"); return; }
+    setPoints(pts - cost);
+    let owned = getOwned();
+    if(owned.some(c => c.name === card.name)){
+        showToast("すでに所持しています");
+        return;
+    }
+    owned.push(card);
+    localStorage.setItem("ownedCards", JSON.stringify(owned));
+    showToast(`${card.name} を交換しました！`);
+    renderGrid();
+}
+
+updateStatus();
+renderGrid();
+</script>
+
+<div class="bottom-nav">
+    <img src="images/btn_home.png"  class="nav-btn" onclick="location.href='home.html'">
+    <img src="images/btn_gacha.png" class="nav-btn" onclick="location.href='gacha.html'">
+    <img src="images/btn_deck.png"  class="nav-btn" onclick="location.href='deck.html'">
+    <img src="images/btn_battle.png" class="nav-btn" onclick="location.href='battle select.html'">
+</div>
+<img src="images/歯車.png" class="setting-btn" onclick="location.href='setting.html'">
+</body>
+</html>

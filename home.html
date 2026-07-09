@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>字変 - ホーム</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  height: 100vh;
+  overflow: hidden;
+  font-family: sans-serif;
+}
+.bg {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, #ffffff 0%, #ffffff 50%, #ff8640 100%);
+  z-index: 0;
+}
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 110px;
+  z-index: 5;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px;
+  gap: 0px;
+}
+.top-home {
+  width: 100%;
+  max-width: 100%;
+  height: 200px;
+  object-fit: cover;
+  object-position: center center;
+  flex-shrink: 0;
+  display: block;
+}
+.panel {
+  width: 85%;
+  max-width: 600px;
+  background: white;
+  border: 3px solid #222;
+  border-radius: 25px;
+  flex-shrink: 0;
+  margin-top: 50px;
+}
+
+/* ガチャパネル */
+.gacha-panel {
+  height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: 0.15s;
+  overflow: hidden;
+  position: relative;
+}
+.gacha-panel:active { transform: scale(0.97); opacity: 0.85; }
+.gacha-panel img { height: 180px; object-fit: contain; pointer-events: none; }
+.gacha-panel .gacha-label {
+  font-size: 22px;
+  font-weight: bold;
+  color: #4b0000;
+  letter-spacing: 4px;
+}
+
+/* お知らせパネル */
+.notice-panel {
+  min-height: 150px;
+  padding: 20px 25px;
+}
+.panel-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #4b0000;
+  border-bottom: 2px solid rgba(75,0,0,0.2);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+.notice-item {
+  font-size: 15px;
+  color: #333;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+}
+.notice-item:last-child { border-bottom: none; }
+
+/* ミッションパネル */
+.mission-panel {
+  padding: 20px 25px;
+}
+.mission-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 15px;
+}
+.mission-item:last-child { border-bottom: none; }
+.mission-name { color: #333; font-weight: bold; }
+.mission-status {
+  font-size: 13px;
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+.mission-status.done { background: #4b0000; color: white; }
+.mission-status.yet { background: #eee; color: #888; }
+.mission-reward {
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+}
+
+/* イベントパネル */
+.event-panel {
+  padding: 20px 25px;
+  margin-bottom: 30px;
+}
+.event-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+.event-item:last-child { border-bottom: none; }
+.event-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+.tag-gacha { background: #fff0cc; color: #886600; }
+.tag-event { background: #e8f0ff; color: #334488; }
+.tag-bonus { background: #e8ffe8; color: #226622; }
+.event-title { font-size: 15px; font-weight: bold; color: #222; }
+.event-period { font-size: 12px; color: #888; margin-top: 2px; }
+
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 110px;
+  background: #5b0000;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
+}
+.nav-btn { width: 70px; cursor: pointer; transition: 0.08s; }
+.nav-btn:active { transform: scale(0.88); }
+.setting-btn {
+  position: fixed;
+  left: 10px;
+  bottom: 140px;
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+  transition: 0.08s;
+  background: none;
+  border: none;
+  z-index: 1100;
+}
+.setting-btn:active { transform: scale(0.88); }
+</style>
+</head>
+<body>
+<audio id="bgm" src="audio/bgm_main.mp3" loop></audio>
+<div class="bg"></div>
+
+<div class="container">
+  <img src="images/top_home.png" class="top-home">
+
+  <!-- ガチャパネル -->
+  <div class="panel gacha-panel" onclick="location.href='gacha.html'">
+    <img src="images/camera.png" style="height:100%;max-height:220px;object-fit:contain;pointer-events:none;">
+    <span class="gacha-label">恒常ガチャ</span>
+  </div>
+
+  <!-- お知らせ -->
+  <div class="panel notice-panel">
+    <div class="panel-title">📢 お知らせ</div>
+    <div class="notice-item">字変へようこそ！</div>
+    <div class="notice-item">チュートリアル実装予定！</div>
+    <div class="notice-item">今後カード追加予定！</div>
+  </div>
+
+  <!-- ミッション -->
+  <div class="panel mission-panel">
+    <div class="panel-title">📋 デイリーミッション</div>
+    <div id="missionList"></div>
+  </div>
+
+  <!-- イベント -->
+  <div class="panel event-panel">
+    <div class="panel-title">🎉 イベント</div>
+    <div id="eventList"></div>
+  </div>
+
+</div>
+
+<div class="bottom-nav">
+  <img src="images/btn_home.png"   class="nav-btn" onclick="location.href='home.html'">
+  <img src="images/btn_gacha.png"  class="nav-btn" onclick="location.href='gacha.html'">
+  <img src="images/btn_deck.png"   class="nav-btn" onclick="location.href='deck.html'">
+  <img src="images/btn_battle.png" class="nav-btn" onclick="location.href='battle select.html'">
+</div>
+
+<img src="images/歯車.png" class="setting-btn" onclick="location.href='setting.html'" style="filter:brightness(0);">
+
+<script>
+  // ===== BGM再生 =====
+const bgmEl = document.getElementById('bgm');
+if (bgmEl) {
+  const savedVol = localStorage.getItem('vol_bgm');
+  bgmEl.volume = (savedVol !== null ? savedVol : 80) / 100;
+
+  // ブラウザの自動再生ブロック対策：最初のタップ/クリックで再生開始
+  const tryPlayBgm = () => {
+    bgmEl.play().catch(() => {});
+    document.removeEventListener('click', tryPlayBgm);
+    document.removeEventListener('touchstart', tryPlayBgm);
+  };
+  document.addEventListener('click', tryPlayBgm, { once: true });
+  document.addEventListener('touchstart', tryPlayBgm, { once: true });
+}
+// ===== ミッション表示 =====
+function renderMissions() {
+  const today = new Date().toDateString();
+  const data = JSON.parse(localStorage.getItem("mission")) || {};
+  const isToday = data.date === today;
+
+  const missions = [
+    {
+      name: "ログインする",
+      done: isToday && data.login,
+      reward: "達成条件の一つ"
+    },
+    {
+      name: "ガチャを1回引く",
+      done: isToday && data.gacha,
+      reward: "達成条件の一つ"
+    },
+    {
+      name: "バトルに1回勝利する",
+      done: isToday && data.battle,
+      reward: "達成条件の一つ"
+    },
+    {
+      name: "ミッション達成報酬",
+      done: isToday && data.rewarded,
+      reward: "願いの短冊 +20枚（ログイン＋ガチャorバトル勝利）"
+    },
+  ];
+
+  const list = document.getElementById("missionList");
+  list.innerHTML = "";
+  missions.forEach(m => {
+    const div = document.createElement("div");
+    div.className = "mission-item";
+    div.innerHTML = `
+      <div>
+        <div class="mission-name">${m.name}</div>
+        <div class="mission-reward">${m.reward}</div>
+      </div>
+      <span class="mission-status ${m.done ? 'done' : 'yet'}">${m.done ? '達成' : '未達成'}</span>
+    `;
+    list.appendChild(div);
+  });
+}
+
+// ===== イベント表示 =====
+// ここにイベントを追加していく
+const events = [
+  {
+    tag: "gacha",
+    tagLabel: "期間限定ガチャ",
+    title: "実装予定",
+    period: "coming soon"
+  },
+  {
+    tag: "event",
+    tagLabel: "期間限定イベント",
+    title: "実装予定",
+    period: "coming soon"
+  },
+];
+
+function renderEvents() {
+  const list = document.getElementById("eventList");
+  list.innerHTML = "";
+  events.forEach(e => {
+    const div = document.createElement("div");
+    div.className = "event-item";
+    div.innerHTML = `
+      <span class="event-tag tag-${e.tag}">${e.tagLabel}</span>
+      <div class="event-title">${e.title}</div>
+      <div class="event-period">${e.period}</div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+renderMissions();
+renderEvents();
+
+
+</script>
+</body>
+</html>

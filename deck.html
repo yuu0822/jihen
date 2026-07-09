@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<style>
+   body{
+    margin:0;
+    padding:20px;
+    background-image:url("images/zukan_background.png");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+    font-family:sans-serif;
+    text-align:center;
+    padding-bottom:140px;
+}
+.bottom-nav{
+  position:fixed;
+  left:0;
+  bottom:0;
+  width:100%;
+  height:110px;
+  background:#5b0000;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  z-index:100;
+}
+.nav-btn{ width:70px; cursor:pointer; transition:0.08s; }
+.nav-btn:active{ transform:scale(0.88); }
+.setting-btn{
+    position:fixed;
+    left:10px;
+    bottom:140px;
+    width:100px;
+    height:100px;
+    cursor:pointer;
+    transition:0.08s;
+    background:none;
+    border:none;
+    line-height:1;
+    z-index:9999;
+}
+.setting-btn:active{ transform:scale(0.88); }
+#cardList{ display:flex; flex-wrap:wrap; gap:15px; justify-content:center; }
+#searchArea{ margin-bottom:20px; }
+#searchBox{
+    width:300px; height:50px; font-size:20px;
+    border:3px solid #6d5208; border-radius:25px; text-align:center;
+}
+#searchBtn{
+    width:80px; height:50px; margin-left:10px; border:none;
+    border-radius:15px; background:#6d5208; color:white; font-size:18px;
+    cursor:pointer; transition:.1s;
+}
+#searchBtn:active{ transform:scale(.92); }
+#cardList{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr); 
+    gap:20px;
+    justify-items:center;
+    max-width:420px;                      
+    margin:auto;
+}
+#deckCount{ font-size:28px; font-weight:bold; color:#4b0000; margin-bottom:20px; }
+#deckArea{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr); 
+    gap:10px;
+    max-width:500px;                      
+    margin:20px auto;
+}
+.deckSlot{
+    width:120px; height:170px;
+    border:3px dashed gray;
+    border-radius:10px;
+    background:rgba(255,255,255,.4);
+}
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>編成</title>
+</head>
+<body>
+<audio id="bgm" src="audio/bgm_main.mp3" loop></audio>
+<h1>編成画面</h1>
+
+<div id="deckCount">デッキ 0 / 12</div>
+
+<div id="deckArea"></div>
+
+<button onclick="kakutei()" style="
+  width:200px; height:60px; font-size:24px;
+  background:#4b0000; color:white; border:none;
+  border-radius:15px; cursor:pointer; margin:20px;
+">確定</button>
+
+<div id="searchArea">
+<input id="searchBox" type="text" placeholder="カード名を検索">
+<select id="typeFilter">
+<option value="">全属性</option>
+<option value="○">○属性</option>
+<option value="□">□属性</option>
+<option value="△">△属性</option>
+</select>
+<select id="rarityFilter">
+<option value="">全レア</option>
+<option value="UR">UR</option>
+<option value="SSR">SSR</option>
+<option value="N">N</option>
+</select>
+<button id="searchBtn">検索</button>
+</div>
+
+<div id="cardList"></div>
+
+<script src="cards.js"></script>
+<script src="gacha.js"></script>
+
+<script>
+    // ===== BGM再生 =====
+const bgmEl = document.getElementById('bgm');
+if (bgmEl) {
+  const savedVol = localStorage.getItem('vol_bgm');
+  bgmEl.volume = (savedVol !== null ? savedVol : 80) / 100;
+
+  // ブラウザの自動再生ブロック対策：最初のタップ/クリックで再生開始
+  const tryPlayBgm = () => {
+    bgmEl.play().catch(() => {});
+    document.removeEventListener('click', tryPlayBgm);
+    document.removeEventListener('touchstart', tryPlayBgm);
+  };
+  document.addEventListener('click', tryPlayBgm, { once: true });
+  document.addEventListener('touchstart', tryPlayBgm, { once: true });
+}
+const ownedCards = JSON.parse(localStorage.getItem("ownedCards")) || [];
+let deck = JSON.parse(localStorage.getItem("deck")) || [];
+let selectedSlot = -1;
+const cardList = document.getElementById("cardList");
+
+document.getElementById("searchBox").addEventListener("keydown", function(event){
+    if(event.key === "Enter") renderCards();
+});
+
+function renderCards(){
+    cardList.innerHTML = "";
+    const keyword = document.getElementById("searchBox").value;
+    const selectedType = document.getElementById("typeFilter").value;
+    const selectedRarity = document.getElementById("rarityFilter").value;
+    ownedCards.forEach(card => {
+        if(keyword && !card.name.includes(keyword)) return;
+        if(selectedType && card.type !== selectedType) return;
+        if(selectedRarity && card.rarity !== selectedRarity) return;
+        const img = document.createElement("img");
+        img.src = "images/genshokugensho_cards/" + card.image;
+        img.style.width = "100px";
+        if(deck.some(d => d.name === card.name)){
+            img.style.border = "4px solid gold";
+            img.style.borderRadius = "10px";
+            img.style.boxShadow = "0 0 15px gold";
+            img.style.opacity = "0.7";
+        }
+        img.onclick = () => {
+            const index = deck.findIndex(c => c.name === card.name);
+            if(index >= 0){
+                deck.splice(index,1);
+            } else {
+                if(deck.length >= 12){ alert("デッキは12枚まで"); return; }
+                deck.push(card);
+            }
+            localStorage.setItem("deck", JSON.stringify(deck));
+            updateDeckCount();
+            renderDeck();
+            renderCards();
+        };
+        cardList.appendChild(img);
+    });
+}
+
+document.getElementById("searchBtn").onclick = renderCards;
+document.getElementById("typeFilter").onchange = renderCards;
+document.getElementById("rarityFilter").onchange = renderCards;
+
+function updateDeckCount(){
+    document.getElementById("deckCount").innerText = `デッキ ${deck.length} / 12`;
+}
+
+function renderDeck(){
+    const deckArea = document.getElementById("deckArea");
+    deckArea.innerHTML = "";
+    for(let i=0;i<12;i++){
+        const slot = document.createElement("div");
+        slot.className = "deckSlot";
+        if(i === selectedSlot) slot.style.border = "4px solid gold";
+        if(deck[i]){
+            const wrapper = document.createElement("div");
+            wrapper.style.position = "relative";
+            wrapper.style.width = "100%";
+            wrapper.style.height = "100%";
+            const img = document.createElement("img");
+            img.src = "images/genshokugensho_cards/" + deck[i].image;
+            img.style.width = "100%";
+            const removeBtn = document.createElement("button");
+            removeBtn.innerText = "✕";
+            removeBtn.style.position = "absolute";
+            removeBtn.style.top = "5px";
+            removeBtn.style.right = "5px";
+            removeBtn.style.width = "28px";
+            removeBtn.style.height = "28px";
+            removeBtn.style.border = "none";
+            removeBtn.style.borderRadius = "50%";
+            removeBtn.style.background = "red";
+            removeBtn.style.color = "white";
+            removeBtn.style.cursor = "pointer";
+            removeBtn.onclick = (event) => {
+                event.stopPropagation();
+                deck.splice(i,1);
+                localStorage.setItem("deck", JSON.stringify(deck));
+                updateDeckCount();
+                renderDeck();
+                renderCards();
+            };
+            wrapper.appendChild(img);
+            wrapper.appendChild(removeBtn);
+            slot.appendChild(wrapper);
+        }
+        deckArea.appendChild(slot);
+    }
+}
+
+renderCards();
+updateDeckCount();
+renderDeck();
+
+function startBattle(){
+    location.href = "battle select.html";
+}
+
+function kakutei(){
+    if(deck.length < 12){ alert(`あと${12 - deck.length}枚必要です`); return; }
+    alert("デッキが完成しました！");
+}
+</script>
+
+<div class="bottom-nav">
+  <img src="images/btn_home.png"  class="nav-btn" onclick="location.href='home.html'">
+  <img src="images/btn_gacha.png" class="nav-btn" onclick="location.href='gacha.html'">
+  <img src="images/btn_deck.png"  class="nav-btn" onclick="location.href='deck.html'">
+  <img src="images/btn_battle.png" class="nav-btn" onclick="startBattle()">
+</div>
+
+<img src="images/歯車.png" class="setting-btn" onclick="location.href='setting.html'" style="filter:invert(1);">
+
+</body>
+</html>
