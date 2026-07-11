@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <link rel="apple-touch-icon" href__="images/icon.png">
+<link rel="icon" href__="images/icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>字変 - Preview</title>
+<style>
+body {
+  margin: 0;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top, #ffffff 0%, #ffffff 50%, #ff8640 100%);
+  z-index: 0;
+}
+.frame {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url("images/frame.png") center/cover no-repeat;
+  z-index: 2;
+  pointer-events: none;
+}
+.content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6vh;
+  height: 100%;
+}
+.card {
+  width: 120vw;
+  max-width: 1600px;
+  max-height: 50vh;
+  object-fit: contain;
+  animation: floatBreath 3s ease-in-out infinite;
+}
+
+@keyframes floatBreath {
+  0%   { transform: translateY(0px)   scale(1);   }
+  50%  { transform: translateY(-20px) scale(1.05); }
+  100% { transform: translateY(0px)   scale(1);   }
+}
+
+.start-btn {
+  position: relative;
+  z-index: 10;
+  width: 220px;
+  height: 60px;
+  border: 4px solid #000000;
+  border-radius: 15px;
+  background: #4b0000;
+  color: rgb(255, 255, 255);
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #2a0000;
+  transition: 0.15s;
+}
+.start-btn:hover { transform: scale(1.05); }
+.start-btn:active { transform: scale(0.95); }
+
+@media (max-width: 768px) {
+  .card { width: 120vw; }
+}
+</style>
+</head>
+<body data-bgm-autostart="false">
+<audio id="bgm" src="audio/bgm_main.mp3" loop></audio>
+<div class="bg"></div>
+<div class="frame"></div>
+
+<div class="content">
+  <img src="images/card.png" class="card">
+  <button class="start-btn" onclick="location.href__='home.html'">
+    はじめる
+  </button>
+</div>
+
+<script src="js/audio.js"></script>
+</body>
+</html>
