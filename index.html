@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>字変 - Preview</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  -webkit-tap-highlight-color: transparent;
+}
+.bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top, #ffffff 0%, #ffffff 50%, #ff8640 100%);
+  z-index: 0;
+  pointer-events: none;
+}
+.frame {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url("images/frame.png") center/cover no-repeat;
+  z-index: 2;
+  pointer-events: none;
+}
+.content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6vh;
+  height: 100%;
+}
+.card {
+  width: 120vw;
+  max-width: 1600px;
+  max-height: 50vh;
+  object-fit: contain;
+  animation: floatBreath 3s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes floatBreath {
+  0%   { transform: translateY(0)   scale(1);    }
+  50%  { transform: translateY(-20px) scale(1.05); }
+  100% { transform: translateY(0)   scale(1);    }
+}
+.start-btn {
+  position: relative;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 220px;
+  height: 60px;
+  border: 4px solid #000;
+  border-radius: 15px;
+  background: #4b0000;
+  color: #fff;
+  font-size: 28px;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #2a0000;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: 0.15s;
+}
+.start-btn:hover  { transform: scale(1.05); }
+.start-btn:active { transform: scale(0.95); }
+@media (max-width: 768px) {
+  .card { width: 120vw; }
+}
+</style>
+</head>
+<body>
+<audio id="bgm" src="audio/bgm_main.mp3" loop></audio>
+<div class="bg"></div>
+<div class="frame"></div>
+<div class="content">
+  <img src="images/card.png" class="card">
+  <a href="home.html" class="start-btn">はじめる</a>
+</div>
+<script src="js/audio.js"></script>
+</body>
+</html>
